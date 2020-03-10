@@ -23,11 +23,13 @@ app.post('/webhook', LINE.middleware(config), async (req, res) => {
         res.send(200)
         return
     }
+    const results = await Promise
+          .all(req.body.events.map(handleEvent))
+          .then(results => {
+              return results
+          })
     await Promise
-        .all(req.body.events.map(handleEvent))
-        .then(result => res.json(result))
-    await Promise
-        .all(req.body.events.map(util.log))
+        .all(results.map(util.log))
         .then(result => res.json(result))
         .catch(err => err)
 })
@@ -62,10 +64,11 @@ async function handleEvent(event) {
         break;
     }
 
-    return line.replyMessage(event.replyToken, {
+    line.replyMessage(event.replyToken, {
         type: 'text',
         text: replyText
     })
+    return {...event, replyText: replyText}
 }
 
 async function generateLou(sentence) {
