@@ -17,7 +17,7 @@ async function convertAbcToKatakana(textEn) {
     const url = `https://www.sljfaq.org/cgi/e2k.cgi?o=json&word=${textEn}&lang=en`
     return axios.get(url)
         .then(res => {
-            return res.data.words.map(word => word.j_pron_spell).join('')
+            return red.data.words ? res.data.words.map(word => word.j_pron_spell).join('') : textEn
         })
         .catch(err => {
             console.log(err.response)
